@@ -3,7 +3,8 @@
 include 'config.php';
 include 'header.php';
 
-$result = mysql_query('SELECT * FROM todo WHERE id = '. $_GET['id']);
+$id = $request->query->getInt('id');
+$result = mysql_query('SELECT * FROM todo WHERE id = '.$id);
 $todo = mysql_fetch_assoc($result);
 
 ?>

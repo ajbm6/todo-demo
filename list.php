@@ -1,27 +1,23 @@
 <?php
 
-//ini_set('display_errors', 0);
-
 include 'config.php';
 include 'header.php';
 
-if ($_POST['action'] == 'create')
-{
-    $query = 'INSERT INTO todo (title) VALUES(\''. $_POST['title'] .'\');';
+if ('create' === $request->request->get('action')) {
+    $title = $request->request->get('title');
+    $query = 'INSERT INTO todo (title) VALUES(\''. $title .'\');';
     mysql_query($query, $conn) or die('Unable to create new task : '. mysql_error());
 
     header('Location: list.php');
-}
-else if ($_GET['action'] == 'close')
-{
-    $query = 'UPDATE todo SET is_done = 1 WHERE id = '. mysql_real_escape_string($_GET['id']);
+} else if ('close' === $request->query->get('action')) {
+    $id = $request->query->getInt('id');
+    $query = 'UPDATE todo SET is_done = 1 WHERE id = '. $id;
     mysql_query($query, $conn) or die('Unable to update existing task : '. mysql_error());
 
     header('Location: list.php');
-}
-else if ($_GET['action'] == 'delete')
-{
-    $query = 'DELETE FROM todo WHERE id = '. $_GET['id'];
+} else if ('delete' === $request->query->get('action')) {
+    $id = $request->query->getInt('id');
+    $query = 'DELETE FROM todo WHERE id = '. $id;
     mysql_query($query, $conn) or die('Unable to delete existing task : '. mysql_error());
 
     header('Location: list.php');
