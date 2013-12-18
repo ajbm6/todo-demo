@@ -5,9 +5,14 @@ require_once realpath(__DIR__.'/vendor/autoload.php');
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Matcher\UrlMatcher;
 use Symfony\Component\Routing\RequestContext;
+use Symfony\Component\Config\FileLocator;
+use Symfony\Component\Routing\Loader\YamlFileLoader;
 use Todo\LegacyKernel;
 
-$routes = include realpath(__DIR__.'/config/routes.php');
+
+$locator = new FileLocator(array(realpath(__DIR__.'/config')));
+$loader  = new YamlFileLoader($locator);
+$routes  = $loader->load('routes.yml');
 
 $request = Request::createFromGlobals();
 

@@ -1,0 +1,14 @@
+homepage:
+    path:     /
+    defaults: { script: list }
+    methods:  GET
+
+todo_list:
+    path:     /list.php
+    defaults: { script: list }
+    methods:  [ GET, POST ]
+
+todo_show:
+    path:     /todo.php
+    defaults: { script: todo }
+    methods:  GET
