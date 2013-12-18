@@ -3,24 +3,27 @@
 include 'config.php';
 include 'header.php';
 
+use Symfony\Component\HttpFoundation\RedirectResponse;
+
+$response = new RedirectResponse('list.php');
 if ('create' === $request->request->get('action')) {
     $title = $request->request->get('title');
     $query = 'INSERT INTO todo (title) VALUES(\''. $title .'\');';
     mysql_query($query, $conn) or die('Unable to create new task : '. mysql_error());
 
-    header('Location: list.php');
+    $response->send();
 } else if ('close' === $request->query->get('action')) {
     $id = $request->query->getInt('id');
     $query = 'UPDATE todo SET is_done = 1 WHERE id = '. $id;
     mysql_query($query, $conn) or die('Unable to update existing task : '. mysql_error());
 
-    header('Location: list.php');
+    $response->send();
 } else if ('delete' === $request->query->get('action')) {
     $id = $request->query->getInt('id');
     $query = 'DELETE FROM todo WHERE id = '. $id;
     mysql_query($query, $conn) or die('Unable to delete existing task : '. mysql_error());
 
-    header('Location: list.php');
+    $response->send();
 }
 
 ?>

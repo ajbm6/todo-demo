@@ -11,3 +11,4 @@ if (!$conn = mysql_connect('localhost', 'root', '')) {
 mysql_select_db('training_todo', $conn) or die('Unable to select database "training_todo"');
 
 $request = Request::createFromGlobals();
+$request->overrideGlobals();
