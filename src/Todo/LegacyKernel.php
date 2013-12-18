@@ -10,8 +10,16 @@ class LegacyKernel implements HttpKernelInterface
 {
     public function handle(Request $request, $type = self::MASTER_REQUEST, $catch = true)
     {
-        if ('/hello' === $request->getPathInfo()) {
-            return new Response('Hello World');
+        if ('/list' === $request->getPathInfo()) {
+            ob_start();
+            include realpath(__DIR__.'/../../legacy/list.php');
+            return new Response(ob_get_clean());
+        }
+
+        if ('/todo' === $request->getPathInfo()) {
+            ob_start();
+            include realpath(__DIR__.'/../../legacy/todo.php');
+            return new Response(ob_get_clean());
         }
 
         return new Response('Lost?', Response::HTTP_NOT_FOUND);
