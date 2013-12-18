@@ -1,4 +1,9 @@
 {
+    "autoload": {
+        "psr-0": {
+            "": "src/"
+        }
+    },
     "require": {
         "symfony/http-kernel": "2.4.*"
     }
