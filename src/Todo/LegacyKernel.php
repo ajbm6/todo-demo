@@ -11,17 +11,21 @@ class LegacyKernel implements HttpKernelInterface
     public function handle(Request $request, $type = self::MASTER_REQUEST, $catch = true)
     {
         if ('/list' === $request->getPathInfo()) {
-            ob_start();
-            include realpath(__DIR__.'/../../legacy/list.php');
-            return new Response(ob_get_clean());
+            return $this->executeLegacyScript('list');
         }
 
         if ('/todo' === $request->getPathInfo()) {
-            ob_start();
-            include realpath(__DIR__.'/../../legacy/todo.php');
-            return new Response(ob_get_clean());
+            return $this->executeLegacyScript('todo');
         }
 
         return new Response('Lost?', Response::HTTP_NOT_FOUND);
+    }
+
+    private function executeLegacyScript($scriptName)
+    {
+        ob_start();
+        include realpath(__DIR__.'/../../legacy/'.$scriptName.'.php');
+
+        return new Response(ob_get_clean());
     }
 } 
