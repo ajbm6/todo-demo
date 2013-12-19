@@ -10,11 +10,22 @@ use Todo\Model\TodoGateway;
 
 class TodoController
 {
+    private $templating;
     private $gateway;
 
     public function __construct()
     {
         $this->gateway = new TodoGateway('training_todo', 'root');
+
+        $loader = new \Twig_Loader_Filesystem(array(
+            realpath(__DIR__.'/../../../views')
+        ));
+
+        $this->templating = new \Twig_Environment($loader, array(
+            'debug' => true,
+            'strict_variables' => true,
+            'cache' => realpath(__DIR__.'/../../../cache')
+        ));
     }
 
     public function deleteAction(Request $request, $id)
@@ -69,10 +80,6 @@ class TodoController
     
     private function render($view, array $variables = array())
     {
-        extract($variables);
-        ob_start();
-        include realpath(__DIR__.'/../../../views/'.$view.'.php');
-        
-        return new Response(ob_get_clean());
+        return new Response($this->templating->render($view.'.twig', $variables));
     }
 } 
