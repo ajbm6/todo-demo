@@ -1,6 +1,6 @@
 homepage:
     path:     /
-    defaults: { script: list }
+    defaults: { _controller: Todo\Controller\TodoController::indexAction, foo: bar }
     methods:  GET
 
 todo_list:
