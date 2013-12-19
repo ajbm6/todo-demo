@@ -10,7 +10,7 @@ use Symfony\Component\Routing\RequestContext;
 use Symfony\Component\Config\FileLocator;
 use Symfony\Component\Routing\Loader\YamlFileLoader;
 use Symfony\Component\EventDispatcher\EventDispatcher;
-use Todo\LegacyKernel;
+use Todo\ApplicationKernel;
 
 
 $locator = new FileLocator(array(realpath(__DIR__.'/config')));
@@ -28,6 +28,6 @@ $eventDispatcher = new EventDispatcher();
 $resolver = new ControllerResolver();
 $httpKernel = new HttpKernel($eventDispatcher, $resolver);
 
-$kernel = new LegacyKernel($httpKernel, $urlMatcher);
+$kernel = new ApplicationKernel($httpKernel, $urlMatcher);
 $response = $kernel->handle($request);
 $response->send();

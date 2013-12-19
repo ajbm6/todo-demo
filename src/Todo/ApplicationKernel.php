@@ -10,7 +10,7 @@ use Symfony\Component\Routing\Exception\MethodNotAllowedException;
 use Symfony\Component\Routing\Exception\ResourceNotFoundException;
 use Symfony\Component\Routing\Matcher\UrlMatcherInterface;
 
-class LegacyKernel implements HttpKernelInterface
+class ApplicationKernel implements HttpKernelInterface
 {
     private $httpKernel;
     private $urlMatcher;
@@ -25,11 +25,7 @@ class LegacyKernel implements HttpKernelInterface
     {
         try {
             $params = $this->urlMatcher->match($request->getPathInfo());
-            
-            if (isset($params['script'])) {
-                return $this->executeLegacyScript($params['script']);
-            }
-            
+
             $request->attributes->add($params);
 
             return $this->httpKernel->handle($request, $type, false);
@@ -45,13 +41,5 @@ class LegacyKernel implements HttpKernelInterface
             }   
             throw $e;
         }
-    }
-
-    private function executeLegacyScript($scriptName)
-    {
-        ob_start();
-        include realpath(__DIR__.'/../../legacy/'.$scriptName.'.php');
-
-        return new Response(ob_get_clean());
     }
 } 
