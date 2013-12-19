@@ -11,10 +11,12 @@ use Symfony\Component\Routing\Matcher\UrlMatcherInterface;
 
 class LegacyKernel implements HttpKernelInterface
 {
+    private $httpKernel;
     private $urlMatcher;
 
-    public function __construct(UrlMatcherInterface $urlMatcher)
+    public function __construct(HttpKernelInterface $httpKernel, UrlMatcherInterface $urlMatcher)
     {
+        $this->httpKernel = $httpKernel;
         $this->urlMatcher = $urlMatcher;
     }
 
@@ -27,40 +29,9 @@ class LegacyKernel implements HttpKernelInterface
                 return $this->executeLegacyScript($params['script']);
             }
             
-            if (!isset($params['_controller'])) {
-                throw new \RuntimeException(sprintf(
-                    'No controller has been set for the route %s.',
-                    $params['_route']
-                ));
-            }
-            
-            $parts = explode('::', $params['_controller']);
-            $className = $parts[0];
-            $actionName = $parts[1];
-
-            $object = new $className();
-            $controller = array($object, $actionName);
-            if (!is_callable($controller)) {
-                throw new \RuntimeException(sprintf(
-                    'Controller %s::%s is not a valid callable',
-                    $className,
-                    $actionName
-                ));
-            }
-            
             $request->attributes->add($params);
-            $response = call_user_func_array($controller, array($request));
-            if (!$response instanceof Response) {
-                throw new \RuntimeException(sprintf(
-                    'Controller %s::%s must return a response object (%s given).',
-                    $className,
-                    $actionName,
-                    gettype($response)
-                ));
-            }
 
-            return $response;
-            
+            return $this->httpKernel->handle($request, $type, false);
         } catch (ResourceNotFoundException $e) {
             return new Response('Lost?', Response::HTTP_NOT_FOUND);
         } catch (MethodNotAllowedException $e) {

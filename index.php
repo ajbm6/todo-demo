@@ -3,10 +3,13 @@
 require_once realpath(__DIR__.'/vendor/autoload.php');
 
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpKernel\HttpKernel;
+use Symfony\Component\HttpKernel\Controller\ControllerResolver;
 use Symfony\Component\Routing\Matcher\UrlMatcher;
 use Symfony\Component\Routing\RequestContext;
 use Symfony\Component\Config\FileLocator;
 use Symfony\Component\Routing\Loader\YamlFileLoader;
+use Symfony\Component\EventDispatcher\EventDispatcher;
 use Todo\LegacyKernel;
 
 
@@ -21,6 +24,10 @@ $context->fromRequest($request);
 
 $urlMatcher = new UrlMatcher($routes, $context);
 
-$kernel = new LegacyKernel($urlMatcher);
+$eventDispatcher = new EventDispatcher();
+$resolver = new ControllerResolver();
+$httpKernel = new HttpKernel($eventDispatcher, $resolver);
+
+$kernel = new LegacyKernel($httpKernel, $urlMatcher);
 $response = $kernel->handle($request);
 $response->send();
