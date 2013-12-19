@@ -7,9 +7,9 @@
 </head>
 <body>
 <div id="container">
-    <h1><a href="list.php">My Todos List</a></h1>
+    <h1><a href="<?php echo $request->getBasePath() ?>/">My Todos List</a></h1>
     <div id="content">
-        <form action="list.php" method="post">
+        <form action="<?php echo $request->getBasePath() ?>/create" method="post">
             <div>
                 <label for="title">Title:</label>
                 <input type="text" id="title" name="title" size="45"/>
@@ -36,7 +36,7 @@
                 <tr>
                     <td class="center"><?php echo $todo['id'] ?></td>
                     <td>
-                        <a href="todo.php?id=<?php echo $todo['id'] ?>">
+                        <a href="<?php echo $request->getBasePath() ?>/todo/<?php echo $todo['id'] ?>">
                             <?php echo htmlspecialchars($todo['title']) ?>
                         </a>
                     </td>
@@ -44,11 +44,11 @@
                     <?php if ($todo['is_done']) : ?>
                         <span class="done">done</span>
                     <?php else: ?>
-                        <a href="list.php?action=close&amp;id=<?php echo $todo['id'] ?>">close</a>
+                        <a href="<?php echo $request->getBasePath() ?>/todo/<?php echo $todo['id'] ?>/close">close</a>
                     <?php endif ?>
                     </td>
                     <td class="center">
-                        <a href="list.php?action=delete&amp;id=<?php echo $todo['id'] ?>">delete</a>
+                        <a href="<?php echo $request->getBasePath() ?>/todo/<?php echo $todo['id'] ?>/delete">delete</a>
                     </td>
                 </tr>
             <?php endforeach ?>

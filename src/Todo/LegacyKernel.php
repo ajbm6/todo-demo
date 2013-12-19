@@ -4,6 +4,7 @@ namespace Todo;
 
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\HttpKernel\HttpKernelInterface;
 use Symfony\Component\Routing\Exception\MethodNotAllowedException;
 use Symfony\Component\Routing\Exception\ResourceNotFoundException;
@@ -32,6 +33,8 @@ class LegacyKernel implements HttpKernelInterface
             $request->attributes->add($params);
 
             return $this->httpKernel->handle($request, $type, false);
+        } catch (NotFoundHttpException $e) {
+            return new Response('Page Not Found', Response::HTTP_NOT_FOUND);
         } catch (ResourceNotFoundException $e) {
             return new Response('Lost?', Response::HTTP_NOT_FOUND);
         } catch (MethodNotAllowedException $e) {

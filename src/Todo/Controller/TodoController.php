@@ -2,37 +2,71 @@
 
 namespace Todo\Controller;
 
+use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
+use Todo\Model\TodoGateway;
 
 class TodoController
 {
-    public function indexAction(Request $request)
+    private $gateway;
+
+    public function __construct()
     {
-        if (!$conn = mysql_connect('localhost', 'root', '')) {
-            die('Unable to connect to MySQL : '. mysql_errno() .' '. mysql_error());
+        $this->gateway = new TodoGateway('training_todo', 'root');
+    }
+
+    public function deleteAction(Request $request, $id)
+    {
+        $this->gateway->deleteTask($id);
+        
+        return $this->redirect($request->getBasePath().'/');
+    }
+
+    public function closeAction(Request $request, $id)
+    {
+        $this->gateway->closeTask($id);
+
+        return $this->redirect($request->getBasePath().'/');
+    }
+
+    public function todoAction(Request $request, $id)
+    {
+        if (!$todo = $this->gateway->find($id)) {
+            throw new NotFoundHttpException(sprintf(
+                'No todo record found for primary key %u.',
+                $id
+            ));
         }
 
-        mysql_select_db('training_todo', $conn) or die('Unable to select database "training_todo"');
-
-        $result = mysql_query('SELECT COUNT(*) FROM todo', $conn);
-        $count  = current(mysql_fetch_row($result));
-        
-        $result = mysql_query('SELECT * FROM todo', $conn);
-        $tasks = array();
-        while ($todo = mysql_fetch_assoc($result)) {
-            $tasks[] = $todo;
-        }
-
-        mysql_close($conn);
-        
-        return $this->render('index', array(
+        return $this->render('todo', array(
             'request' => $request,
-            'count'   => $count,
-            'tasks'   => $tasks,
+            'todo'    => $todo,
         ));
     }
 
+    public function indexAction(Request $request)
+    {
+        return $this->render('index', array(
+            'request' => $request,
+            'count'   => $this->gateway->countAllTasks(),
+            'tasks'   => $this->gateway->findAllTasks(),
+        ));
+    }
+
+    public function createAction(Request $request)
+    {
+        $this->gateway->createNewTask($request->request->get('title'));
+        
+        return $this->redirect('/');
+    }
+    
+    private function redirect($url)
+    {
+        return new RedirectResponse($url);
+    }
+    
     private function render($view, array $variables = array())
     {
         extract($variables);
