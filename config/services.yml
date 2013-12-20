@@ -1,0 +1,69 @@
+parameters:
+    kernel.cache_dir:     %kernel.root_dir%/cache
+    
+    templating.options:
+        debug:            true
+        strict_variables: true
+        cache:            %kernel.cache_dir%/twig
+    
+    router.options:
+        cache_dir:        %kernel.cache_dir%
+
+services:
+    controller_listener:
+        class:     Todo\EventListener\ControllerListener
+        arguments: [ @templating, @todo_gateway ]
+
+    exception_listener:
+        class:     Symfony\Component\HttpKernel\EventListener\ExceptionListener
+        arguments: [ 'Todo\Controller\ExceptionController::exceptionAction' ]
+
+    router_listener:
+        class:     Symfony\Component\HttpKernel\EventListener\RouterListener
+        arguments: [ @router, @request_context ]
+
+    request_context:
+        class:     Symfony\Component\Routing\RequestContext
+
+    yaml_file_loader:
+        class:     Symfony\Component\Routing\Loader\YamlFileLoader
+        arguments: [ @file_locator ]
+
+    file_locator:
+        class:     Symfony\Component\Config\FileLocator
+        arguments: [ '%file_locator.paths%' ]
+
+    router:
+        class:     Symfony\Component\Routing\Router
+        arguments: [ @yaml_file_loader, 'routes.yml', '%router.options%', @request_context ]
+
+    event_dispatcher:
+        class:     Symfony\Component\EventDispatcher\EventDispatcher
+        calls:
+            -      [ addSubscriber, [ @router_listener ] ]
+            -      [ addSubscriber, [ @exception_listener ] ]
+            -      [ addSubscriber, [ @controller_listener ] ]
+
+    templating_loader:
+        class:     Twig_Loader_Filesystem
+        arguments: [ [ '%kernel.root_dir%/views' ] ]
+        public:    false
+
+    templating:
+        class:     Twig_Environment
+        arguments: [ @templating_loader, '%templating.options%' ]
+
+    http_kernel:
+        class:     Symfony\Component\HttpKernel\HttpKernel
+        arguments: [ @event_dispatcher, @controller_resolver ]
+
+    database_connection:
+        class:     Database\Connection
+        arguments: [ 'training_todo', 'root', null, 'localhost', 3306 ]
+
+    todo_gateway:
+        class:     Todo\Model\TodoGateway
+        arguments: [ @database_connection ]
+
+    controller_resolver:
+        class: Symfony\Component\HttpKernel\Controller\ControllerResolver
