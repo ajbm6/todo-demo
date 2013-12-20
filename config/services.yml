@@ -1,13 +1,5 @@
-parameters:
-    kernel.cache_dir:     %kernel.root_dir%/cache
-    
-    templating.options:
-        debug:            true
-        strict_variables: true
-        cache:            %kernel.cache_dir%/twig
-    
-    router.options:
-        cache_dir:        %kernel.cache_dir%
+imports:
+    - { resource: parameters.yml }
 
 services:
     controller_listener:
@@ -59,7 +51,7 @@ services:
 
     database_connection:
         class:     Database\Connection
-        arguments: [ 'training_todo', 'root', null, 'localhost', 3306 ]
+        arguments: [ %database_name%, %database_user%, %database_pass%, %database_host%, %database_port% ]
 
     todo_gateway:
         class:     Todo\Model\TodoGateway

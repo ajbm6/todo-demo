@@ -1,0 +1,23 @@
+parameters:
+
+    # Database Settings
+    database_name: training_todo
+    database_host: localhost
+    database_user: root
+    database_pass: null
+    database_port: 3306
+
+    # Application Settings
+    kernel.cache_dir:     %kernel.root_dir%/cache
+
+    file_locator.paths:   [ %kernel.root_dir%/config ]
+
+    # Twig Configuration
+    templating.options:
+        debug:            true
+        strict_variables: true
+        cache:            %kernel.cache_dir%/twig
+
+    # Routing Configuration
+    router.options:
+        cache_dir:        %kernel.cache_dir%
