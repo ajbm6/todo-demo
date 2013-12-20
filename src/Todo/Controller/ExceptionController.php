@@ -10,7 +10,7 @@ class ExceptionController extends Controller
 {
     public function exceptionAction(FlattenException $exception, Request $request)
     {
-        $vars = array('request' => $request, 'exception' => $exception);
+        $vars = array('exception' => $exception);
         
         try {
             $response = $this->render('error'.$exception->getStatusCode(), $vars);

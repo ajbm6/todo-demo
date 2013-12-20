@@ -12,21 +12,21 @@ class TodoController extends Controller
         return $this->container->get('todo_gateway');
     }
 
-    public function deleteAction(Request $request, $id)
+    public function deleteAction($id)
     {
         $this->getGateway()->deleteTask($id);
         
-        return $this->redirect($request->getBasePath().'/');
+        return $this->redirect($this->generateUrl('homepage'));
     }
 
-    public function closeAction(Request $request, $id)
+    public function closeAction($id)
     {
         $this->getGateway()->closeTask($id);
 
-        return $this->redirect($request->getBasePath().'/');
+        return $this->redirect($this->generateUrl('homepage'));
     }
 
-    public function todoAction(Request $request, $id)
+    public function todoAction($id)
     {
         if (!$todo = $this->getGateway()->find($id)) {
             throw new NotFoundHttpException(sprintf(
@@ -35,16 +35,12 @@ class TodoController extends Controller
             ));
         }
 
-        return $this->render('todo', array(
-            'request' => $request,
-            'todo'    => $todo,
-        ));
+        return $this->render('todo', array('todo' => $todo));
     }
 
     public function indexAction(Request $request)
     {
         return $this->render('index', array(
-            'request' => $request,
             'count'   => $this->getGateway()->countAllTasks(),
             'tasks'   => $this->getGateway()->findAllTasks(),
         ));
@@ -54,6 +50,6 @@ class TodoController extends Controller
     {
         $this->getGateway()->createNewTask($request->request->get('title'));
         
-        return $this->redirect('/');
+        return $this->redirect($this->generateUrl('homepage'));
     }
 } 

@@ -13,6 +13,11 @@ abstract class Controller extends ContainerAware
         return new RedirectResponse($url);
     }
 
+    protected function generateUrl($route, array $parameters = array(), $absolute = false)
+    {
+        return $this->container->get('router')->generate($route, $parameters, $absolute);
+    }
+    
     protected function render($view, array $variables = array())
     {
         return new Response($this->container->get('templating')->render($view.'.twig', $variables));
