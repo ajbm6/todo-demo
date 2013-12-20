@@ -2,18 +2,12 @@
 
 namespace Todo\Controller;
 
+use Symfony\Component\DependencyInjection\ContainerAware;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 
-abstract class Controller
+abstract class Controller extends ContainerAware
 {
-    protected $templating;
-
-    public function setTemplating(\Twig_Environment $templating)
-    {
-        $this->templating = $templating;
-    }
-
     protected function redirect($url)
     {
         return new RedirectResponse($url);
@@ -21,6 +15,6 @@ abstract class Controller
 
     protected function render($view, array $variables = array())
     {
-        return new Response($this->templating->render($view.'.twig', $variables));
+        return new Response($this->container->get('templating')->render($view.'.twig', $variables));
     }
 } 

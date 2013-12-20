@@ -4,7 +4,7 @@ imports:
 services:
     controller_listener:
         class:     Todo\EventListener\ControllerListener
-        arguments: [ @templating, @todo_gateway ]
+        arguments: [ @service_container ]
 
     exception_listener:
         class:     Symfony\Component\HttpKernel\EventListener\ExceptionListener

@@ -4,34 +4,31 @@ namespace Todo\Controller;
 
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
-use Todo\Model\TodoGateway;
 
 class TodoController extends Controller
 {
-    private $gateway;
-
-    public function setGateway(TodoGateway $gateway)
+    private function getGateway()
     {
-        $this->gateway = $gateway;
+        return $this->container->get('todo_gateway');
     }
 
     public function deleteAction(Request $request, $id)
     {
-        $this->gateway->deleteTask($id);
+        $this->getGateway()->deleteTask($id);
         
         return $this->redirect($request->getBasePath().'/');
     }
 
     public function closeAction(Request $request, $id)
     {
-        $this->gateway->closeTask($id);
+        $this->getGateway()->closeTask($id);
 
         return $this->redirect($request->getBasePath().'/');
     }
 
     public function todoAction(Request $request, $id)
     {
-        if (!$todo = $this->gateway->find($id)) {
+        if (!$todo = $this->getGateway()->find($id)) {
             throw new NotFoundHttpException(sprintf(
                 'No todo record found for primary key %u.',
                 $id
@@ -48,14 +45,14 @@ class TodoController extends Controller
     {
         return $this->render('index', array(
             'request' => $request,
-            'count'   => $this->gateway->countAllTasks(),
-            'tasks'   => $this->gateway->findAllTasks(),
+            'count'   => $this->getGateway()->countAllTasks(),
+            'tasks'   => $this->getGateway()->findAllTasks(),
         ));
     }
 
     public function createAction(Request $request)
     {
-        $this->gateway->createNewTask($request->request->get('title'));
+        $this->getGateway()->createNewTask($request->request->get('title'));
         
         return $this->redirect('/');
     }
