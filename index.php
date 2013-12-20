@@ -13,6 +13,9 @@ use Symfony\Component\Config\FileLocator;
 use Symfony\Component\Routing\Loader\YamlFileLoader;
 use Symfony\Component\EventDispatcher\EventDispatcher;
 use Todo\ApplicationKernel;
+use Todo\Model\TodoGateway;
+use Todo\EventListener\ControllerListener;
+use Database\Connection;
 
 
 $locator = new FileLocator(array(realpath(__DIR__.'/config')));
@@ -26,10 +29,21 @@ $context->fromRequest($request);
 
 $urlMatcher = new UrlMatcher($routes, $context);
 
+$connection  = new Connection('training_todo', 'root');
+$todoGateway = new TodoGateway($connection);
+
+$loader = new \Twig_Loader_Filesystem(array(realpath(__DIR__.'/views')));
+
+$templating = new \Twig_Environment($loader, array(
+    'debug' => true,
+    'strict_variables' => true,
+    'cache' => realpath(__DIR__.'/cache')
+));
+
 $eventDispatcher = new EventDispatcher();
 $eventDispatcher->addSubscriber(new RouterListener($urlMatcher, $context));
 $eventDispatcher->addSubscriber(new ExceptionListener('Todo\\Controller\\ExceptionController::exceptionAction'));
-
+$eventDispatcher->addSubscriber(new ControllerListener($templating, $todoGateway));
 
 $resolver = new ControllerResolver();
 $httpKernel = new HttpKernel($eventDispatcher, $resolver);

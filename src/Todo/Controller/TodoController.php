@@ -2,7 +2,6 @@
 
 namespace Todo\Controller;
 
-use Database\Connection;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Todo\Model\TodoGateway;
@@ -11,11 +10,9 @@ class TodoController extends Controller
 {
     private $gateway;
 
-    public function __construct()
+    public function setGateway(TodoGateway $gateway)
     {
-        parent::__construct();
-
-        $this->gateway = new TodoGateway(new Connection('training_todo', 'root'));
+        $this->gateway = $gateway;
     }
 
     public function deleteAction(Request $request, $id)

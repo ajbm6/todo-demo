@@ -9,17 +9,9 @@ abstract class Controller
 {
     protected $templating;
 
-    public function __construct()
+    public function setTemplating(\Twig_Environment $templating)
     {
-        $loader = new \Twig_Loader_Filesystem(array(
-            realpath(__DIR__.'/../../../views')
-        ));
-
-        $this->templating = new \Twig_Environment($loader, array(
-            'debug' => true,
-            'strict_variables' => true,
-            'cache' => realpath(__DIR__.'/../../../cache')
-        ));
+        $this->templating = $templating;
     }
 
     protected function redirect($url)
