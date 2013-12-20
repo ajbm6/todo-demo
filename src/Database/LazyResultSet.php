@@ -11,6 +11,8 @@ class LazyResultSet extends ResultSet
     {
         $this->loaded = false;
         $this->result = $result;
+        
+        parent::__construct();
     }
 
     public function getFirst()

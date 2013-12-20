@@ -31,7 +31,7 @@ class TodoGateway
             throw new GatewayException(sprintf('Unable to close existing task #%u.', $pk), 0, $e);
         }
     }
-    
+
     public function createNewTask($title)
     {
         if (empty($title)) {
@@ -48,7 +48,7 @@ class TodoGateway
 
         return $this->database->getLastInsertId();
     }
-    
+
     public function find($pk)
     {
         return $this->database->fetchOne('SELECT * FROM todo WHERE id = '. (int) $pk);
@@ -58,11 +58,11 @@ class TodoGateway
     {
         return $this->database->fetchAll('SELECT * FROM todo');
     }
-    
+
     public function countAllTasks()
     {
         $record = $this->database->fetchOne('SELECT COUNT(*) FROM todo');
 
         return (int) current($record);
     }
-} 
+}
