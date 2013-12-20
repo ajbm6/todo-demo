@@ -1,6 +1,6 @@
 <?php
 
-namespace Todo\Model;
+namespace Database;
 
 class DatabaseException extends \RuntimeException
 {

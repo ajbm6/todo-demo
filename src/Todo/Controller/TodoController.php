@@ -2,6 +2,7 @@
 
 namespace Todo\Controller;
 
+use Database\Connection;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -15,7 +16,7 @@ class TodoController
 
     public function __construct()
     {
-        $this->gateway = new TodoGateway('training_todo', 'root');
+        $this->gateway = new TodoGateway(new Connection('training_todo', 'root'));
 
         $loader = new \Twig_Loader_Filesystem(array(
             realpath(__DIR__.'/../../../views')
