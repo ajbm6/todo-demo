@@ -1,4 +1,8 @@
 {
+    "name": "sensiolabs/todo",
+    "description": "Yet another Todo application written with Symfony Components and Twig",
+    "type": "application",
+    "license": "MIT",
     "autoload": {
         "psr-0": {
             "": "src/"

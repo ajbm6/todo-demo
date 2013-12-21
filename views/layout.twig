@@ -4,6 +4,7 @@
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
     <title>{% block title 'Todo Application' %}</title>
     <link rel="stylesheet" media="screen" type="text/css" href="{{ asset('style.css') }}"/>
+    <link rel="icon" type="image/png" href="{{ asset('favicon.ico') }}">
 </head>
 <body>
 <div id="container">
@@ -12,7 +13,7 @@
         {% block content %}{% endblock %}
     </div>
     <div id="footer">
-        (c) copyright - not sensio
+        (c) Copyright {{ 'now'|date('Y') }} - Not SensioLabs
     </div>
 </div>
 </body>
