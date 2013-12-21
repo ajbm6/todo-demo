@@ -6,10 +6,6 @@ services:
         class:     Todo\Twig\RoutingExtension
         arguments: [ @router, @request_stack ]
 
-    request_stack_listener:
-        class:     Todo\EventListener\RequestStackListener
-        arguments: [ @request_stack ]
-
     controller_listener:
         class:     Todo\EventListener\ControllerListener
         arguments: [ @service_container ]
@@ -46,7 +42,6 @@ services:
             -      [ addSubscriber, [ @router_listener ] ]
             -      [ addSubscriber, [ @exception_listener ] ]
             -      [ addSubscriber, [ @controller_listener ] ]
-            -      [ addSubscriber, [ @request_stack_listener ] ]
 
     templating_loader:
         class:     Twig_Loader_Filesystem
@@ -59,10 +54,9 @@ services:
         calls:
             -      [ addExtension, [ @twig.routing_extension ] ]
 
-
     http_kernel:
         class:     Symfony\Component\HttpKernel\HttpKernel
-        arguments: [ @event_dispatcher, @controller_resolver ]
+        arguments: [ @event_dispatcher, @controller_resolver, @request_stack ]
 
     database_connection:
         class:     Database\Connection
