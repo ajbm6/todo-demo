@@ -2,9 +2,13 @@ imports:
     - { resource: parameters.yml }
 
 services:
+    twig.asset_extension:
+        class:     Todo\Twig\AssetExtension
+        arguments: [ @request_stack ]
+
     twig.routing_extension:
         class:     Todo\Twig\RoutingExtension
-        arguments: [ @router, @request_stack ]
+        arguments: [ @router ]
 
     controller_listener:
         class:     Todo\EventListener\ControllerListener
@@ -12,7 +16,7 @@ services:
 
     exception_listener:
         class:     Symfony\Component\HttpKernel\EventListener\ExceptionListener
-        arguments: [ 'Todo\Controller\ExceptionController::exceptionAction' ]
+        arguments: [ '%exception_handler%' ]
 
     router_listener:
         class:     Symfony\Component\HttpKernel\EventListener\RouterListener
@@ -34,7 +38,7 @@ services:
 
     router:
         class:     Symfony\Component\Routing\Router
-        arguments: [ @yaml_file_loader, 'routes.yml', '%router.options%', @request_context ]
+        arguments: [ @yaml_file_loader, '%router_file%', '%router.options%', @request_context ]
 
     event_dispatcher:
         class:     Symfony\Component\EventDispatcher\EventDispatcher
@@ -45,7 +49,7 @@ services:
 
     templating_loader:
         class:     Twig_Loader_Filesystem
-        arguments: [ [ '%kernel.root_dir%/views' ] ]
+        arguments: [ '%templating_loader.paths%' ]
         public:    false
 
     templating:
@@ -53,6 +57,7 @@ services:
         arguments: [ @templating_loader, '%templating.options%' ]
         calls:
             -      [ addExtension, [ @twig.routing_extension ] ]
+            -      [ addExtension, [ @twig.asset_extension ] ]
 
     http_kernel:
         class:     Symfony\Component\HttpKernel\HttpKernel

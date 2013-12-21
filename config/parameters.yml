@@ -8,16 +8,20 @@ parameters:
     database_port: 3306
 
     # Application Settings
-    kernel.cache_dir:     %kernel.root_dir%/cache
-
-    file_locator.paths:   [ %kernel.root_dir%/config ]
+    exception_handler:   'Todo\Controller\ExceptionController::exceptionAction'
 
     # Twig Configuration
     templating.options:
-        debug:            true
-        strict_variables: true
+        debug:            %kernel.debug%
+        strict_variables: %kernel.debug%
         cache:            %kernel.cache_dir%/twig
 
+    templating_loader.paths: [ %kernel.views_dir% ]
+
     # Routing Configuration
+    file_locator.paths:   [ %kernel.config_dir% ]
+
+    router_file:          %kernel.config_dir%/routes.yml
     router.options:
         cache_dir:        %kernel.cache_dir%
+        debug:            %kernel.debug%
